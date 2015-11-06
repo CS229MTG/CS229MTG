@@ -12,15 +12,7 @@ import urllib2
 import string
 from bs4 import BeautifulSoup
 
-def main(argv):
-	#handle inputs: enter a number 1-27482 to get that card.
-	if len(argv) < 2:
-		print >> sys.stderr, 'Usage: enter a number 1-27482 to get a card in SQL.'
-		sys.exit(1)
-	verbose = False
-	if len(argv) > 2:
-		if argv[2] == '-v': verbose = True
-	cardNumber = argv[1]
+def downloadSinglePage(cardNumber, numberDays, verbose):
 	#missing 0's:
 	missing0s = ''
 	for x in xrange(1,6-len(cardNumber)):
@@ -44,12 +36,40 @@ def main(argv):
 	
 	#parse the data
 	dataList = dataBlock.split(' ],[ ')
-	if verbose: print dataList[0]
-	if verbose: print dataList[1]
+	dataList.reverse()
+	justPricesDatalist = []
+	for x in range(0,numberDays-1):
+		if x < len(dataList):
+			val = str(dataList[x][string.find(dataList[x],',')+1:])
+			val = val.replace('.','')
+			val = val.lstrip('0')
+			justPricesDatalist.append(val)
+		else:
+			justPricesDatalist.append("null")
+	justPricesDatalist.reverse()
 	
-	#1339286400000 is the first day
+	printstmt = '(' + cardName + ','
+	for x in range(0,numberDays-1):
+		printstmt = printstmt + justPricesDatalist[x]+','
+	printstmt = printstmt[:-2] #remove last comma
+	printstmt = printstmt + ')'
 	
+	#end message
 	if verbose: print 'Successfully processed:' + cardName
+	return printstmt
+
+def main(argv):
+	#handle inputs: enter a number 1-27482 to get that card.
+	#error: no inputs
+	if len(argv) < 3:
+		print >> sys.stderr, 'Usage: enter a number 1-27482 and the number of days to go back to get a card in SQL. Put -v at the end for verbose.'
+		sys.exit(1)
+	numberDays = int(argv[2])
+	verbose = False
+	if len(argv) > 3:
+		if argv[3] == '-v': verbose = True
+	cardNumber = argv[1]
+	print downloadSinglePage(cardNumber, numberDays, verbose)
 	
 if __name__ == '__main__':
 	main(sys.argv)
