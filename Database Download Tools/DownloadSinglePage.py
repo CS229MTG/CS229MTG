@@ -8,11 +8,23 @@ This is my attempt to download the data from 1 page.
 """
 
 import sys
+import os
 import urllib2
 import string
+import datetime
 from bs4 import BeautifulSoup
 
-def downloadSinglePage(cardNumber, numberDays, verbose):
+currenttime = 1446879000000;#Yea yea yea I know it's dumb. So what.
+
+def convertUnixTimeToHuman(str):
+	ans = (
+		datetime.datetime.fromtimestamp(
+			(int(str)/1000)
+		).strftime('%Y-%m-%d %H:%M:%S')
+	)
+	return ans
+
+def downloadSinglePage(cardNumber, verbose):
 	#missing 0's:
 	missing0s = ''
 	for x in xrange(1,6-len(cardNumber)):
@@ -25,9 +37,10 @@ def downloadSinglePage(cardNumber, numberDays, verbose):
 	html = response.read()
 	soup = BeautifulSoup(html, 'html.parser')
 	cardName = str(soup.title)[7:-24]
-	if verbose: print 'Successfully downloaded ' + cardName+'! Parsing data...'
+	if verbose: print 'Successfully downloaded ' + cardName+'!'
 	
 	#trim down html into 1 block of data (a string) to parse
+	if verbose: print 'Parsing data...'
 	dataBlock = str(soup.find(id="financial"))
 	startIndex = string.find(dataBlock,'Average')+21
 	dataBlock = dataBlock[startIndex:]
@@ -36,40 +49,58 @@ def downloadSinglePage(cardNumber, numberDays, verbose):
 	
 	#parse the data
 	dataList = dataBlock.split(' ],[ ')
-	dataList.reverse()
-	justPricesDatalist = []
-	for x in range(0,numberDays-1):
-		if x < len(dataList):
-			val = str(dataList[x][string.find(dataList[x],',')+1:])
-			val = val.replace('.','')
-			val = val.lstrip('0')
-			justPricesDatalist.append(val)
-		else:
-			justPricesDatalist.append("null")
-	justPricesDatalist.reverse()
+	if verbose: print 'Downloaded html parsed into '+ str(len(dataList))+' data points.'
+	if verbose: print 'Parsing data points...'
+	dataMap = {}
+	for item in dataList:
+		commaloc = string.find(item,',')
+		key = str(item[:commaloc])
+		val = str(item[commaloc+1:])
+		val = val.replace('.','')
+		val = val.lstrip('0')
+		if key in dataMap.keys():
+			if verbose: print '\tDuplicate! '+ key + '('+convertUnixTimeToHuman(key)+') was '+dataMap[key] +' and is now '+val
+		dataMap[key] = val
+	if verbose: print 'Discovered '+str(len(dataMap)) + ' data points to be saved.'
 	
-	printstmt = '(' + cardName + ','
-	for x in range(0,numberDays-1):
-		printstmt = printstmt + justPricesDatalist[x]+','
-	printstmt = printstmt[:-2] #remove last comma
-	printstmt = printstmt + ')'
+	#save locally, putting in nulls where needed
+	filename = 'CardData' + str(cardNumber)+'.txt'
+	try: #delete if exists
+		os.remove(filename)
+	except OSError:
+		pass
+	f = open(filename,'w')
+	f.write(cardName+'\n')
+	entriesCount = 0;
+	dataEntriesCount = 0;
+	datetime = 1339286400000
+	while datetime < currenttime:
+		if not str(datetime) in dataMap.keys():
+			if verbose: print '\tPrice for ' +str(datetime)+'('+convertUnixTimeToHuman(str(datetime))+') not in data!'
+			f.write(str(datetime)+',-1\n')
+		else:
+			f.write(str(datetime)+','+dataMap[str(datetime)]+'\n')
+			dataEntriesCount+=1
+		datetime+=86400000
+		entriesCount+=1
+	f.close()
+	if verbose: print 'Lines in file: ' +str(entriesCount)+'+1(cardname)'
+	if verbose: print 'Actual data in file: '+str(dataEntriesCount)+' data points'
 	
 	#end message
 	if verbose: print 'Successfully processed:' + cardName
-	return printstmt
 
 def main(argv):
 	#handle inputs: enter a number 1-27482 to get that card.
 	#error: no inputs
 	if len(argv) < 3:
-		print >> sys.stderr, 'Usage: enter a number 1-27482 and the number of days to go back to get a card in SQL. Put -v at the end for verbose.'
+		print >> sys.stderr, 'Usage: enter a number 1-27482. Put -v at the end for verbose.'
 		sys.exit(1)
-	numberDays = int(argv[2])
 	verbose = False
-	if len(argv) > 3:
-		if argv[3] == '-v': verbose = True
+	if len(argv) > 2:
+		if argv[2] == '-v': verbose = True
 	cardNumber = argv[1]
-	print downloadSinglePage(cardNumber, numberDays, verbose)
+	print downloadSinglePage(cardNumber, verbose)
 	
 if __name__ == '__main__':
 	main(sys.argv)
