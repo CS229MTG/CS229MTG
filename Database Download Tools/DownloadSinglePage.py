@@ -56,6 +56,10 @@ def downloadSinglePage(cardNumber, verbose):
 		commaloc = string.find(item,',')
 		key = str(item[:commaloc])
 		val = str(item[commaloc+1:])
+		decimalPlace = string.find(val, '.')
+		if len(val)-decimalPlace < 3: 
+			if verbose: print '\tPrice missing digit:'+ str(key) + '('+convertUnixTimeToHuman(key)+'), was'+str(val)
+			val = val + '0'
 		val = val.replace('.','')
 		val = val.lstrip('0')
 		if key in dataMap.keys():
