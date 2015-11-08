@@ -14,10 +14,12 @@ from multiprocessing import Pool
 startCard = 1
 incrementCard = 1000
 endCard = 27482
-numThreads = 10
+numThreads = 15
+thisverbose = True
 
 def callDownloadSinglePage(cardNumber):
 	DownloadSinglePage.downloadSinglePage(str(cardNumber), False)
+	if thisverbose: print 'Got card number ' + str(cardNumber)
 
 def main(argv):
 	#indicate start
