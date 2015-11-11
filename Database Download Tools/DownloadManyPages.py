@@ -10,16 +10,29 @@ import sys
 import os
 import DownloadSinglePage
 from multiprocessing import Pool
+import threading
 
 startCard = 1
-incrementCard = 1000
+incrementCard = 1
 endCard = 27482
-numThreads = 12
+numThreads = 20
 thisverbose = True
+lock = threading.Lock()
+
+countDownLock = threading.Lock()
 
 def callDownloadSinglePage(cardNumber):
-	DownloadSinglePage.downloadSinglePage(str(cardNumber), False)
-	if thisverbose: print 'Got card number ' + str(cardNumber)
+	try:
+		DownloadSinglePage.downloadSinglePage(str(cardNumber), False)
+		with countDownLock:
+			if thisverbose: print 'Got card number ' + str(cardNumber)
+			#cardsLeft = cardsLeft - 1
+	except:
+		with lock:
+			print 'FAILURE!!!! CARD NUMBER ' + str(cardNumber)
+			f = open('FAILURES.txt','a')
+			f.write(str(cardNumber)+'\n')
+			f.close()
 
 def main(argv):
 	#indicate start
@@ -32,6 +45,11 @@ def main(argv):
 	while x<=endCard:
 		cardList.append(x)
 		x+=incrementCard
+		
+	#empty the failure file	
+	f = open('FAILURES.txt','a')
+	f.truncate()
+	f.close()
 	
 	#thread operation
 	p = Pool(numThreads)
