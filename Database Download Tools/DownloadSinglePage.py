@@ -56,7 +56,11 @@ def downloadSinglePage(cardNumber, verbose):
 	dataBlock = str(soup.find(id="financial"))
 	startIndex = string.find(dataBlock,'Average')+21
 	dataBlock = dataBlock[startIndex:]
-	endIndex = string.find(dataBlock,'id') - 5
+	endIndex = string.find(dataBlock,'] ]') - 3
+	if endIndex < 0: 
+		print dataBlock
+		print 'FATAL ERROR: id not found'
+		sys.exit(1)
 	dataBlock = dataBlock[:endIndex]
 	
 	#parse the data

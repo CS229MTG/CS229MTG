@@ -14,7 +14,7 @@ from multiprocessing import Pool
 startCard = 1
 incrementCard = 1000
 endCard = 27482
-numThreads = 15
+numThreads = 12
 thisverbose = True
 
 def callDownloadSinglePage(cardNumber):
