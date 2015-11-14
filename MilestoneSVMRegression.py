@@ -39,11 +39,11 @@ def constructTrainingMatrix(startNumber,endNumber, convertToSparse=False):
     #numVectors=len(listOfTrainingVectors)
     #listOfTrainingVectors=[array(trainingVec) for trainingVec in listOfTrainingVectors] #converts each vector to array form for next step; might change order, shouldn't matter
     #trainingMatrix=np.zeroes((numVectors,numDays), np.int16)
-    #trainingMatrix=np.matrix(listOfTrainingVectors)
-    #print 'trainingMatrix is ' 
-    #print trainingMatrix
-    #print 'y Vector is '
-    #print yVector
+    trainingMatrix=np.matrix(listOfTrainingVectors)
+    print 'trainingMatrix is ' 
+    print trainingMatrix
+    print 'y Vector is '
+    print yVector
     return (trainingMatrix,yVector)
         
 
@@ -59,7 +59,15 @@ def main(argv):
     endNumber=int(argv[2])
     #for x in xrange(startNumber, endNumber+1):
     #   print str(x) #basic testing
-    (trainingMatrix,yVector)=constructTrainingMatrix(startNumber, endNumber)
+    (X,y)=constructTrainingMatrix(startNumber, endNumber)
+    #svr_rbf = sklearn.svm.SVR(kernel='rbf', C=1e3, gamma=0.1)
+    svr_lin = sklearn.svm.SVR(kernel='linear', C=1e3)
+    #svr_poly = sklearn.svm.SVR(kernel='poly', C=1e3, degree=2)
+    #svr_rbf= svr_rbf.fit(X, y)
+    svr_lin= svr_lin.fit(X, y)
+    y_lin = svr_lin.predict(X)
+    print 'predicted y using svr_lin is ' + str(y_lin) 
+    #svr_poly= svr_poly.fit(X, y)
     
     
     
