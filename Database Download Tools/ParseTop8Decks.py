@@ -14,52 +14,37 @@ import datetime
 
 
 verbose = False
-    
-def parseIntoHeaderDatePriceList(cardNumber):
-    cardNumber = str(cardNumber)
-    #missing 0's:
-    mm0s = missing0s(cardNumber)
-    
-    #open the file, get the lines
-    filename = 'Database Download Tools/cardPriceData/CardData'+ mm0s + cardNumber+".txt"
-    try:
-        f = open(filename,'r')
-        lines = f.readlines(28000)
-        removeCarriageReturn(lines)
-        f.close()
-        
-        return lines
-    except:
-        if verbose: print 'File not found.'
-        return None
 
-def removeHeader(list):
-    header = [list[0],list[1]]
-    del list[0]
-    del list[0]
-    return header
+def missing0s(cardNumber):
+    if len(str(cardNumber)) == 1:
+		return '0'
+	else 
+		return ''
+
+def removeCarriageReturn(list):
+    for idx, line in enumerate(list):
+        list[idx] = line[:-1]
     
-def parseIntoPriceOnlyList(cardNumber):
-    list = parseIntoHeaderDatePriceList(cardNumber)
-    if list == None: return None
-    
-    removeHeader(list)
-    
-    priceList = []
-    for x, line in enumerate(list):
-        priceStr = line.split(',')[1]
-        if priceStr=='': priceStr='-1'
-        priceList.append(int(priceStr))
-    
-    return priceList
+def readDeckAndSideDeck(tourNumber,DeckNumber):
+    #open the file, get the lines
+    filename = 'Top8Decks/RawData/'+ missing0s(tourNumber)+str(tourNumber) + '/Deck ('+str(DeckNumber)+").txt"
+	if verbose: print 'Opening '+filename
+	
+	with open(filename, "r") as ins:
+    array = []
+    for line in ins:
+        array.append(line)
+		
+	
+	#removeCarriageReturn(lines)
+	
+	return lines
+	#if verbose: print 'File not found.'
+	#return None
     
 def main(argv):
-    if len(argv) < 2:
-        print >> sys.stderr, 'Do not run this from the command prompt unless testing. '
-        sys.exit(1)
-    if len(argv) > 2:
-        if argv[2] == '-v': verbose = True
-    cardNumber = argv[1]
+    if len(argv) > 1:
+        if argv[1] == '-v': verbose = True
     priceList = parseIntoPriceOnlyList(cardNumber)
     
     if priceList == None: 
