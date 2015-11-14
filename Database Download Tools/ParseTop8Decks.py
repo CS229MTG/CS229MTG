@@ -16,41 +16,56 @@ import datetime
 verbose = False
 
 def missing0s(cardNumber):
-    if len(str(cardNumber)) == 1:
+	if len(str(cardNumber)) == 1:
 		return '0'
-	else 
+	else:
 		return ''
 
 def removeCarriageReturn(list):
-    for idx, line in enumerate(list):
-        list[idx] = line[:-1]
-    
+	for idx, line in enumerate(list):
+		list[idx] = line[:-1]
+	
 def readDeckAndSideDeck(tourNumber,DeckNumber):
-    #open the file, get the lines
-    filename = 'Top8Decks/RawData/'+ missing0s(tourNumber)+str(tourNumber) + '/Deck ('+str(DeckNumber)+").txt"
+	#open the file, get the lines
+	filename = 'Top8Decks/RawData/'+ missing0s(tourNumber)+str(tourNumber) + '/Deck ('+str(DeckNumber)+").txt"
 	if verbose: print 'Opening '+filename
 	
+	MainDeck = []
+	SideDeck = []
 	with open(filename, "r") as ins:
-    array = []
-    for line in ins:
-        array.append(line)
+		ismaind = True
+		for line in ins:
+			if line == '' or line == '\r\n' or line == '\n' or line == '\r':
+				ismaind = False;
+				continue;
+			if ismaind: 
+				MainDeck.append(line)
+			else:
+				SideDeck.append(line)
 		
 	
-	#removeCarriageReturn(lines)
+	removeCarriageReturn(MainDeck)
+	removeCarriageReturn(SideDeck)
 	
-	return lines
-	#if verbose: print 'File not found.'
-	#return None
-    
+	return (MainDeck, SideDeck)
+	
 def main(argv):
-    if len(argv) > 1:
-        if argv[1] == '-v': verbose = True
-    priceList = parseIntoPriceOnlyList(cardNumber)
-    
-    if priceList == None: 
-        print "file not found."
-        exit(1)
-    print priceList
-    
+	verbose = False
+	if len(argv) > 0:
+		if argv[1] == '-v': verbose = True
+	
+	for tournament in range(1,12):
+		for deck in range(1,8):
+			(MainDeck, SideDeck) = readDeckAndSideDeck(tournament, deck)
+			#This is a list of cards with the number of that card in it.
+			#Like, entry = '4 Godless Shrine'
+			#The winning deck's first entry is 'W'
+			
+			#should you wish to view the cards
+			viewing = False
+			if viewing: print 'Here we go: ' + str(tournament) + ' and ' + str(deck)
+			if viewing: print '\nMainDeck: ' + str(MainDeck)
+			if viewing: print '\nSideDeck: ' + str(SideDeck)
+	
 if __name__ == '__main__':
-    main(sys.argv)
+	main(sys.argv)
