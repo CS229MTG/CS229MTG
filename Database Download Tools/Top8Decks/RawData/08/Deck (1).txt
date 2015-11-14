@@ -1,0 +1,34 @@
+5 Island
+2 Mountain
+4 Scalding Tarn
+3 Misty Rainforest
+3 Steam Vents
+3 Sulfur Falls
+1 Stomping Ground
+1 Desolate Lighthouse
+1 Tectonic Edge
+1 Spellskite
+4 Snapcaster Mage
+4 Deceiver Exarch
+2 Pestermite
+2 Vendilion Clique
+1 Kiki-Jiki, Mirror Breaker
+4 Serum Visions
+4 Lightning Bolt
+1 Dispel
+1 Spell Snare
+1 Peek
+1 Izzet Charm
+3 Remand
+2 Electrolyze
+2 Cryptic Command
+4 Splinter Twin
+
+1 Threads of Disloyalty
+3 Ancient Grudge
+1 Dispel
+2 Grim Lavamancer
+2 Blood Moon
+2 Batterskull
+2 Relic of Progenitus
+2 Flame Slash

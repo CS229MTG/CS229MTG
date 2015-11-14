@@ -1,0 +1,28 @@
+W
+4 Ghost Quarter
+1 Hallowed Fountain
+1 Plains
+2 Scalding Tarn
+2 Misty Rainforest
+7 Island
+4 Second Sunrise
+4 Faith's Reward
+4 Chromatic Sphere
+4 Chromatic Star
+4 Conjurer's Bauble
+4 Elsewhere Flask
+4 Lotus Bloom
+4 Reshape
+4 Serum Visions
+3 Sleight of Hand
+1 Gitaxian Probe
+2 Silence
+1 Pyrite Spellbomb
+
+2 Silence
+4 Leyline of Sanctity
+2 Pithing Needle
+4 Echoing Truth
+1 Nihil Spellbomb
+1 Grafdigger's Cage
+1 Grapeshot
