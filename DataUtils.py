@@ -69,6 +69,7 @@ def parseIntoPriceOnlyList(cardNumber):
     for x, line in enumerate(list):
         priceStr = line.split(',')[1]
         if priceStr=='': priceStr='-1'
+        if priceStr=='-1':priceStr='0'
         priceList.append(int(priceStr))
     
     return priceList
