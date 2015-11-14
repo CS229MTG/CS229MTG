@@ -13,7 +13,10 @@ import string
 import datetime
 import DataUtils
 import numpy as np
-import sklearn.svm
+from sklearn import svm
+from sklearn import cross_validation as cv
+from sklearn import metrics 
+
 
 
 currenttime = 1446879000000;
@@ -42,10 +45,10 @@ def constructTrainingMatrix(startNumber,endNumber, labelGap, convertToSparse=Fal
     #listOfTrainingVectors=[array(trainingVec) for trainingVec in listOfTrainingVectors] #converts each vector to array form for next step; might change order, shouldn't matter
     #trainingMatrix=np.zeroes((numVectors,numDays), np.int16)
     trainingMatrix=np.matrix(listOfTrainingVectors)
-    print 'trainingMatrix is ' 
-    print trainingMatrix
-    print 'y Vector is '
-    print yVector
+    #print 'trainingMatrix is ' 
+    #print trainingMatrix
+    #print 'y Vector is '
+    #print yVector
     return (trainingMatrix,yVector)
         
 
@@ -54,16 +57,20 @@ def main(argv):
     # 1st arg: starting cardnumber, mandatory
     # 2nd arg: ending cardnumber, mandatory
     # 3rd arg: number of days ahead we're trying to predict, optional
+    # 4th arg: 
     labelGap=1
+    verbose=False 
     if len(argv) < 2:
         print >> sys.stderr, 'Do not run this from the command prompt unless testing. '
         sys.exit(1)
-    elif len(argv) < 3:
+    if len(argv) < 3:
         print 'at least 2 args required'
         exit(1)
-    elif len(argv)==4:
+    if len(argv) >=4:
         labelGap=int(argv[3])
-    elif len(argv) > 4:
+    if len(argv) >=5:
+        verbose=True
+    if len(argv) > 5:
         print "fewer args please"
         exit(1)
     startNumber = int(argv[1])
@@ -71,13 +78,25 @@ def main(argv):
     #for x in xrange(startNumber, endNumber+1):
     #   print str(x) #basic testing
     (X,y)=constructTrainingMatrix(startNumber, endNumber, labelGap)
-    #svr_rbf = sklearn.svm.SVR(kernel='rbf', C=1e3, gamma=0.1)
-    svr_lin = sklearn.svm.SVR(kernel='linear', C=1e3)
-    #svr_poly = sklearn.svm.SVR(kernel='poly', C=1e3, degree=2)
+    #X is a matrix with n_examples rows and n_days columns, y is a n_examples long vector of what the prices were labelGap days in the future
+    (X_train,X_test,y_train,y_test)=cv.train_test_split(X,y,test_size=0.4, random_state=0)
+    if verbose:
+        print 'size of whole example matrix \t' + str(X.shape) 
+        print 'size of whole output vector \t' + str((np.array(y)).shape)
+        print 'size of training example matrix ' + str(X_train.shape)
+        print 'size of training output vector \t' + str((np.array(y_train)).shape)
+        print 'size of test example matrix \t' + str(X_test.shape)
+        print 'size of test output vector \t' + str((np.array(y_test)).shape)
+    #svr_rbf = svm.SVR(kernel='rbf', C=1e3, gamma=0.1)
+    svr_lin = svm.SVR(kernel='linear', C=1e3)
+    #svr_poly = svm.SVR(kernel='poly', C=1e3, degree=2)
     #svr_rbf= svr_rbf.fit(X, y)
-    svr_lin= svr_lin.fit(X, y)
-    y_lin = svr_lin.predict(X)
-    print 'predicted y using svr_lin is ' + str(y_lin) 
+    svr_lin= svr_lin.fit(X_train, y_train)
+    y_pred = svr_lin.predict(X_test)
+    print 'y values for the test set ' + str(y_test)
+    print 'predicted y for test set using svr_lin is ' + str(y_pred) 
+    score=svr_lin.score(X_test,y_test)
+    print 'labelGap:score of estimator \n' + str(labelGap)+ ':'+str(score)
     #svr_poly= svr_poly.fit(X, y)
     
     
