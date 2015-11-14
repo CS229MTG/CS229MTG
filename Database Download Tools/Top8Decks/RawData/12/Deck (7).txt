@@ -1,0 +1,33 @@
+1 Stomping Ground
+2 Swamp
+1 Forest
+4 Verdant Catacombs
+1 Misty Rainforest
+3 Twilight Mire
+2 Blood Crypt
+1 Overgrown Tomb
+4 Treetop Village
+2 Raging Ravine
+4 Blackcleave Cliffs
+1 Thrun, the Last Troll
+4 Bloodbraid Elf
+4 Tarmogoyf
+4 Kitchen Finks
+4 Dark Confidant
+4 Lightning Bolt
+2 Abrupt Decay
+2 Dismember
+3 Thoughtseize
+3 Inquisition of Kozilek
+3 Jund Charm
+1 Maelstrom Pulse
+
+1 Batterskull
+1 Wurmcoil Engine
+1 Abrupt Decay
+2 Slaughter Games
+2 Rakdos Charm
+2 Ancient Grudge
+2 Phyrexian Metamorph
+3 Fulminator Mage
+1 Bituminous Blast
