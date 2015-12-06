@@ -13,29 +13,36 @@ CS145 parser modified heavily for CS229.
 import sys
 from json import loads
 from re import sub
-from ..DatabaseDownloadTools import DataUtils
+import os.path
 
-		
+JSONUtilsVerbose = true;
 """
 Returns true if a file ends in .json
 """
 def isJson(f):
 	return len(f) > 5 and f[-5:] == '.json'
+    
+def missing0s(cardNumber):
+    m0s = ''
+    for x in xrange(1,6-len(str(cardNumber))):
+        m0s += '0'
+    return m0s
 
 def parseJsonIntoCardsDictionary():
+	if JSONUtilsVerbose: print 'Parsing JSON file...'
 	#parse the json file
 	json_file = 'DATA-AllCards-x.json'
 	with open(json_file, 'r') as f:
 		cards = loads(f.read()) 
-	print len(cards)
+	if JSONUtilsVerbose: print 'Parsing JSON Complete.'
 	#return the dictionary made
 	return cards
 
-def retrieveCardData(cardNumber, cardDict):
+def retrieveCardDataIntoVector(cardNumber, cardDict):
 	#open the file, get the card name
     #missing 0's:
 	mm0s = missing0s(cardNumber)
-	filename = 'cardPriceData/CardData'+ mm0s + cardNumber+'.txt'
+	filename = 'cardPriceData/CardData'+ mm0s + str(cardNumber)+'.txt'
 	
 	with open(filename, 'r') as f:
 		cardName = f.readline().strip()
@@ -44,7 +51,6 @@ def retrieveCardData(cardNumber, cardDict):
 	return cardDict[cardName]
 
 def main(argv):
-	print 'HELLO'
 	if len(argv) < 2:
 		print >> sys.stderr, 'Usage: python JSONUtils <card number>'
 		sys.exit(1)
@@ -52,9 +58,20 @@ def main(argv):
 	#get dictionary
 	cardsDict = parseJsonIntoCardsDictionary()
 	
+	if JSONUtilsVerbose: print 'Mapping cards from price data to JSON data and recording errors...'
 	#attempt to retrieve data
-	for f in argv[1:]:
-		retrieveCardData(int(f), cardsDict)
+	errfilename = 'FAILURESMappingPriceToCardName.txt'
+	try: #delete if exists
+		os.remove(errfilename)
+	except OSError:
+		pass
+	with open(errfilename, 'w') as f:
+		for x in range(1,31):
+			try:
+				card = retrieveCardDataIntoVector(int(x), cardsDict)
+			except:
+				f.write(str(x)+'\n')
+	print 'Done!'
 	
 if __name__ == '__main__':
 	main(sys.argv)
