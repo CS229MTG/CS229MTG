@@ -41,7 +41,7 @@ def parseIntoHeaderDatePriceList(cardNumber):
     mm0s = missing0s(cardNumber)
     
     #open the file, get the lines
-    filename = 'Database Download Tools/cardPriceData/CardData'+ mm0s + cardNumber+".txt"
+    filename = 'DatabaseDownloadTools/cardPriceData/CardData'+ mm0s + cardNumber+".txt"
     try:
         f = open(filename,'r')
         lines = f.readlines(28000)
