@@ -4,44 +4,75 @@ import sys
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+from boto.ec2.elb import listener
 
+startValue = 1
+incrementValue = 1
+endValue = 30
 
-
-def algor1(input1,input2,input3,input4,input5,input6):
+def algor1(xaxis):
     ret = []
-    for x in input1:
+    for x in xaxis:
+        #GET OUTPUTS!
         ret.append(2)
     return ret
     
-def algor2(input1,input2,input3,input4,input5,input6):
+def algor2(xaxis):
     ret = []
-    for x in input1:
+    for x in xaxis:
+        #GET OUTPUTS!
         ret.append(4)
     return ret
     
+
+def savePlot(list,filename):
+    filename = './Results/' + filename + '.txt'
+    try: os.remove(filename)
+    except: pass
+    
+    f = open(filename,'w')
+    for x in list:
+        f.write(str(x) + '\n')
+    f.close()
+    
+def loadPlot(filename):
+    filename = './Results/' + filename + '.txt'
+    ret = []
+    with open(filename,'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            ret.append(float(line))
+    return ret 
 
 funcdict = {
   'algor1': algor1,
   'algor2': algor2
 }
 
-def plotAlgorithmOutpus():    
+def plotAlgorithmOutputs():    
     xaxis  = []
-    for x in range(1,29):
+    x = startValue
+    while x < endValue:
         xaxis.append(x)
+        x += incrementValue
         
-    listToPlot1 = funcdict['algor1'](xaxis,0,0,0,0,0)
-    listToPlot2 = funcdict['algor2'](xaxis,0,0,0,0,0)
+    listToPlot1 = funcdict['algor1'](xaxis)
+    listToPlot2 = funcdict['algor2'](xaxis)
 
-    
+    savePlot(listToPlot1,'listToPlot1')
+    listToPlot1 = loadPlot('listToPlot1')
     
     plt.plot(xaxis,listToPlot1,'bs')
     plt.plot(xaxis,listToPlot2,'g^')
     plt.ylabel('some numbers')
+    
+    print 'Displaying plot: close plot to finish script.'
     plt.show()
 
-def main(argv):
-    plotAlgorithmOutpus()
+def main(argv):    
+    print 'Beginning plot script...'
+    
+    plotAlgorithmOutputs()
         
     print 'Done!'
 if __name__ == '__main__':
