@@ -15,6 +15,7 @@ import datetime
 from bs4 import BeautifulSoup
 
 currenttime = 1446879000000;#Yea yea yea I know it's dumb. So what.
+# real world Sat, 07 Nov 2015 06:50:00 GMT
 longverbose = False
 
 
