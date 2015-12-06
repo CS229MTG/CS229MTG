@@ -11,11 +11,16 @@ CS145 parser modified heavily for CS229.
 """
 
 import sys
+import os
 from json import loads
 from re import sub
-
-columnSeparator = "|"
-
+try:
+	os.chdir('C:\Users\Emily\Documents\GitHub\CS229MTG\DatabaseDownloadTools')
+except:
+	print 'no'
+	
+	
+	
 CategoriesDict = {}
 UserDict = {}
 BidsList = []
