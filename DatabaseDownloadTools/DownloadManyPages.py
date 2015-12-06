@@ -12,9 +12,9 @@ import DownloadSinglePage
 from multiprocessing import Pool
 import threading
 
-startCard = 1
+startCard = 27482
 incrementCard = 1
-endCard = 27482
+endCard = 30000
 numThreads = 20
 thisverbose = True
 lock = threading.Lock()
@@ -40,12 +40,13 @@ def main(argv):
     print 'in the range' +str(startCard)+'-'+str(endCard)
     
     #generate list of cards to spit out
-    f = open('failuresTrue.txt', 'r')
-    cardList = f.readlines()
-    #x = startCard
-    #while x<=endCard:
-    #   cardList.append(x)
-    #   x+=incrementCard
+    #f = open('failuresTrue.txt', 'r')
+    #cardList = f.readlines()
+    cardList=[]
+    x = startCard
+    while x<=endCard:
+       cardList.append(x)
+       x+=incrementCard
         
     #empty the failure file 
     f = open('FAILURES.txt','a')

@@ -14,6 +14,8 @@ import datetime
 import shutil
 import DataUtils
 
+startCard=27482
+endCard=30000
 
 def getFileNameFromCardNumber(c, src):
 	cardNumber = str(c)
@@ -32,7 +34,7 @@ def getFileNameFromCardNumber(c, src):
 
 def copyFileIfRelevant(cardNumber):
 	#get the prices
-	priceList = DataUtils.parseIntoPriceOnlyList(cardNumber)
+	priceList = DataUtils.parseIntoPriceOnlyList(cardNumber, False)
 	if priceList == None:
 		return 0
 		
@@ -46,7 +48,7 @@ def copyFileIfRelevant(cardNumber):
 def main(argv):
 	print 'Beginning to sort cards...'
 	numRelevant = 0
-	for x in range(1,28000):
+	for x in range(startCard,endCard):
 		if x%500==0: print 'Sorted ' + str(x) + '...'
 		numRelevant += copyFileIfRelevant(x)
 	

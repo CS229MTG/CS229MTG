@@ -15,6 +15,7 @@ import datetime
 from bs4 import BeautifulSoup
 
 currenttime = 1446879000000;#Yea yea yea I know it's dumb. So what.
+# real world Sat, 07 Nov 2015 06:50:00 GMT
 longverbose = False
 
 
@@ -58,7 +59,7 @@ def downloadSinglePage(cardNumber, verbose):
 	dataBlock = dataBlock[startIndex:]
 	endIndex = string.find(dataBlock,'] ]') - 3
 	if endIndex < 0: 
-		print dataBlock
+		#print dataBlock
 		print 'FATAL ERROR: id not found'
 		sys.exit(1)
 	dataBlock = dataBlock[:endIndex]
