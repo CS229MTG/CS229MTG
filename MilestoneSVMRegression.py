@@ -122,7 +122,7 @@ def main(argv):
     
     #score=trainEstimator(X,y)
     #print 'labelGap:score without scaling \n' + str(labelGap)+ ':'+str(score)
-    (X_train,X_test,y_train,y_test)=cv.train_test_split(X,y,test_size=0.4, random_state=0)
+    (X_train,X_test,y_train,y_test)=cv.train_test_split(X_scaled,y,test_size=0.4, random_state=0)
     #if verbose:
     #    print 'size of whole example matrix \t' + str(X.shape) 
     #    print 'size of whole output vector \t' + str((np.array(y)).shape)
