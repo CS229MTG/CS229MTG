@@ -58,6 +58,27 @@ def constructTrainingMatrix(startNumber,endNumber, labelGap, convertToSparse=Fal
     #print 'y Vector is '
     #print yVector
     return (trainingMatrix,yVector)
+    
+def trainEstimator(X, y,):
+    (X_train,X_test,y_train,y_test)=cv.train_test_split(X,y,test_size=0.4, random_state=0)
+    #if verbose:
+    #    print 'size of whole example matrix \t' + str(X.shape) 
+    #    print 'size of whole output vector \t' + str((np.array(y)).shape)
+    #    print 'size of training example matrix ' + str(X_train.shape)
+    #    print 'size of training output vector \t' + str((np.array(y_train)).shape)
+    #    print 'size of test example matrix \t' + str(X_test.shape)
+    #    print 'size of test output vector \t' + str((np.array(y_test)).shape)
+    #svr= svm.SVR(kernel='rbf', C=1e3, gamma=0.1)
+    svr = svm.SVR(kernel='linear', C=10)
+    #svr = svm.SVR(kernel='poly', C=1e3, degree=2)
+    svr= svr.fit(X_train, y_train)
+    y_pred = svr.predict(X_test)
+    #print 'y values for the test set ' + str(y_test)
+    #print 'predicted y for test set using svr is ' + str(y_pred) 
+    score=svr.score(X_test,y_test)
+    
+    #svr_poly= svr_poly.fit(X, y)
+   
         
 
 
@@ -98,14 +119,17 @@ def main(argv):
         print 'here is the data'+ str(X)
         print 'here is the scaled data'+ str(X_scaled)
     #X is a matrix with n_examples rows and n_days columns, y is a n_examples long vector of what the prices were labelGap days in the future
-    (X_train,X_test,y_train,y_test)=cv.train_test_split(X_scaled,y,test_size=0.4, random_state=0)
-    if verbose:
-        print 'size of whole example matrix \t' + str(X.shape) 
-        print 'size of whole output vector \t' + str((np.array(y)).shape)
-        print 'size of training example matrix ' + str(X_train.shape)
-        print 'size of training output vector \t' + str((np.array(y_train)).shape)
-        print 'size of test example matrix \t' + str(X_test.shape)
-        print 'size of test output vector \t' + str((np.array(y_test)).shape)
+    
+    #score=trainEstimator(X,y)
+    #print 'labelGap:score without scaling \n' + str(labelGap)+ ':'+str(score)
+    (X_train,X_test,y_train,y_test)=cv.train_test_split(X,y,test_size=0.4, random_state=0)
+    #if verbose:
+    #    print 'size of whole example matrix \t' + str(X.shape) 
+    #    print 'size of whole output vector \t' + str((np.array(y)).shape)
+    #    print 'size of training example matrix ' + str(X_train.shape)
+    #    print 'size of training output vector \t' + str((np.array(y_train)).shape)
+    #    print 'size of test example matrix \t' + str(X_test.shape)
+    #    print 'size of test output vector \t' + str((np.array(y_test)).shape)
     #svr= svm.SVR(kernel='rbf', C=1e3, gamma=0.1)
     svr = svm.SVR(kernel='linear', C=10)
     #svr = svm.SVR(kernel='poly', C=1e3, degree=2)
@@ -114,9 +138,9 @@ def main(argv):
     #print 'y values for the test set ' + str(y_test)
     #print 'predicted y for test set using svr is ' + str(y_pred) 
     score=svr.score(X_test,y_test)
-    print 'labelGap:score of estimator \n' + str(labelGap)+ ':'+str(score)
-    #svr_poly= svr_poly.fit(X, y)
     
+    #svr_poly= svr_poly.fit(X, y)
+    print 'labelGap:score with scaling \n' + str(labelGap)+ ':'+str(score)
     
     
     
