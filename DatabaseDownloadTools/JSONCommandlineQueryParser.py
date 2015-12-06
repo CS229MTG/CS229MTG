@@ -29,7 +29,8 @@ Returns true if a file ends in .json
 def isJson(f):
 	return len(f) > 5 and f[-5:] == '.json'
 
-def parseJson(json_file):
+def parseJson():
+	json_file = 'DATA-AllCards-x.json'
 	with open(json_file, 'r') as f:
 		cards = loads(f.read()) # creates a Python dictionary of Items for the supplied json file
 		
@@ -44,9 +45,6 @@ def parseJson(json_file):
 			print 'Card not found'
 			continue
 		try:
-			
-"""
-"""
 			legalities = thiscard['legalities']
 			for legality in legalities:
 				print '\t'+legality['format']+': \t'+legality['legality']
@@ -59,15 +57,7 @@ def parseJson(json_file):
 					print key+': '+str(len(thiscard[key]))
 		
 def main(argv):
-	if len(argv) < 2:
-		print >> sys.stderr, 'Usage: python skeleton_json_parser.py <path to json files>'
-		sys.exit(1)
-	
-	
-	for f in argv[1:]:
-		if isJson(f):
-			parseJson(f)
-			print "Exiting"
+		parseJson()
 	
 if __name__ == '__main__':
 	main(sys.argv)
