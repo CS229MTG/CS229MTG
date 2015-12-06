@@ -44,11 +44,19 @@ def retrieveCardDataIntoVector(cardNumber, cardDict):
 	mm0s = missing0s(cardNumber)
 	filename = 'cardPriceData/CardData'+ mm0s + str(cardNumber)+'.txt'
 	
-	with open(filename, 'r') as f:
-		cardName = f.readline().strip()
+	try:
+		with open(filename, 'r') as f:
+			cardName = f.readline().strip()
+	except: 
+		return True
 	
 	#look in dictionary for card
-	return cardDict[cardName]
+	try:
+		card = cardDict[cardName]
+	except:
+		return False
+		
+	return True
 
 def main(argv):
 	
@@ -64,9 +72,7 @@ def main(argv):
 		pass
 	with open(errfilename, 'w') as f:
 		for x in range(1,31):
-			try:
-				card = retrieveCardDataIntoVector(int(x), cardsDict)
-			except:
+			if not retrieveCardDataIntoVector(int(x), cardsDict):
 				f.write(str(x)+'\n')
 	print 'Done!'
 	
