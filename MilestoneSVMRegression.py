@@ -18,6 +18,8 @@ from sklearn import cross_validation as cv
 from sklearn import metrics 
 from sklearn import preprocessing
 from sklearn.decomposition import PCA
+from sklearn import pipeline
+from sklearn import grid_search
 
 
 
@@ -42,7 +44,7 @@ def constructTrainingMatrix(startNumber,endNumber, labelGap, convertToSparse=Fal
             #    print 'day lengths not equal, sad times'
             #    return None
             cardsUsed.append(x)
-            yVector.append(priceVector[-1])
+            yVector.append(float(priceVector[-1]))
             #trainingVec=pricVec+AttribVec
             listOfTrainingVectors.append(priceVector[0:-labelGap])
             #print 'traing vector was'+str(priceVector)+'; list is now:' + str(listOfpriceVectors)
@@ -56,23 +58,6 @@ def constructTrainingMatrix(startNumber,endNumber, labelGap, convertToSparse=Fal
     #print 'y Vector is '
     #print yVector
     return (trainingMatrix,yVector)
-    
-def trainEstimator(X, y,):
-    (X_train,X_test,y_train,y_test)=cv.train_test_split(X,y,test_size=0.4, random_state=0)
-    
-    #svr= svm.SVR(kernel='rbf', C=1e3, gamma=0.1)
-    svr = svm.SVR(kernel='linear', C=10)
-    #svr = svm.SVR(kernel='poly', C=1e3, degree=2)
-    svr= svr.fit(X_train, y_train)
-    y_pred = svr.predict(X_test)
-    #print 'y values for the test set ' + str(y_test)
-    #print 'predicted y for test set using svr is ' + str(y_pred) 
-    score=svr.score(X_test,y_test)
-    
-    #svr_poly= svr_poly.fit(X, y)
-   
-        
-
 
 def main(argv):
     # 1st arg: starting cardnumber, mandatory
@@ -98,32 +83,46 @@ def main(argv):
     endNumber=int(argv[2])
     
     (X,y)=constructTrainingMatrix(startNumber, endNumber, labelGap)
-    
-    scaler=preprocessing.StandardScaler().fit(X)
-    X=scaler.transform(X)
-    #print 'scaled x:' + str(X)
-    pca=PCA(n_components=10)
-    pca.fit(X)
-    #print str(pca)
-    print pca.explained_variance_ratio_
-    X=pca.transform(X)
-    #print 'transformed X:' + str(X)
     #X is a matrix with n_examples rows and n_days columns, y is a n_examples long vector of what the prices were labelGap days in the future
+    X_train, X_test, y_train, y_test =cv.train_test_split(
+    X, y, test_size=0.3, random_state=0)
     
-    #score=trainEstimator(X,y)
-    #print 'labelGap:score without scaling \n' + str(labelGap)+ ':'+str(score)
-    (X_train,X_test,y_train,y_test)=cv.train_test_split(X,y,test_size=0.4, random_state=0)
-    #svr= svm.SVR(kernel='rbf', C=10, gamma=0.1)
-    svr = svm.SVR(kernel='linear', C=10)
-    #svr = svm.SVR(kernel='poly', C=1, degree=2)
-    svr= svr.fit(X_train, y_train)
-    y_pred = svr.predict(X_test)
-    #print 'y values for the test set ' + str(y_test)
-    #print 'predicted y for test set using svr is ' + str(y_pred) 
-    score=svr.score(X_test,y_test)
-    #print 'weights' + str(svr.coef_)
-    print 'labelGap:score with scaling \n' + str(labelGap)+ ':'+str(score)
+    #XVar_test, yVar_test=filterLargeDeltaCards(X_test,y_test)
     
+    scaler=preprocessing.StandardScaler()
+    pca=PCA(n_components=10)
+    svr=svm.SVR(kernel='linear', C=1)
+    pipe=pipeline.Pipeline([("scaler",scaler),("pca",pca),("svr",svr)])
+    # this "pipeline" is an object which combines the tasks of scaling the data, running PCA, and then doing a Support Vector Regression
+    # that allows us to automate parameter tuning  via Cross Validation in a fairly painless manner
+    # the parameters for the pipeline are: n_components, C, epsilon, kernel, degree (poly kernel only), and gamma (rbf only)
+    param_grid=[{'svr__kernel': ['linear'], 'svr__C': [10, 80, 200]}
+                    #,{'svr__kernel': ['poly'], 'svr__degree': [2,3,4],
+                    #'svr__C': [.1,1, 10, 100]}
+                    ]
+                    
+    tunedPipe=grid_search.GridSearchCV(pipe, param_grid, cv=7)
+    tunedPipe.fit(X_train,y_train)
+    print("Best parameters set found on development set:")
+    print()
+    print(tunedPipe.best_params_)
+    print()
+    print("Grid scores on development set:")
+    print()
+    for params, mean_score, scores in tunedPipe.grid_scores_:
+        print("%0.3f (+/-%0.03f) for %r"
+              % (mean_score, scores.std() * 2, params))
+    print()
+
+    print("Detailed classification report:")
+    print()
+    print("The model is trained on the full development set.")
+    print("The scores are computed on the full evaluation set.")
+    print()
+    tunedScore=tunedPipe.score(X_test,y_test)
+    print 'score on test set was ' + str(tunedScore)
+    print()
+   
     
     
     
