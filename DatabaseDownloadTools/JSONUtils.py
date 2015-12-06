@@ -15,7 +15,7 @@ from json import loads
 from re import sub
 import os.path
 
-JSONUtilsVerbose = true;
+JSONUtilsVerbose = True;
 """
 Returns true if a file ends in .json
 """
@@ -51,9 +51,6 @@ def retrieveCardDataIntoVector(cardNumber, cardDict):
 	return cardDict[cardName]
 
 def main(argv):
-	if len(argv) < 2:
-		print >> sys.stderr, 'Usage: python JSONUtils <card number>'
-		sys.exit(1)
 	
 	#get dictionary
 	cardsDict = parseJsonIntoCardsDictionary()
