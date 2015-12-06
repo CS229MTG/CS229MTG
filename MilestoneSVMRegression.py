@@ -16,6 +16,8 @@ import numpy as np
 from sklearn import svm
 from sklearn import cross_validation as cv
 from sklearn import metrics 
+from sklearn import preprocessing
+
 
 
 
@@ -24,27 +26,33 @@ currenttime = 1446879000000;
 def constructTrainingMatrix(startNumber,endNumber, labelGap, convertToSparse=False):
     listOfTrainingVectors=[]
     yVector=[]
-    numDays=0
+    cardsUsed=[]
+    #numDays=0
+    #parse JSON data
     for x in xrange(startNumber, endNumber+1):
-        trainingVector=DataUtils.parseIntoPriceOnlyList(x)
-        if not trainingVector==None:
-            if trainingVector[-1]<100:
+        priceVector=DataUtils.parseIntoPriceOnlyList(x)
+        # card attributes vector=Utils.parseIntoAttributeList(x,parsedData)
+        if not priceVector==None:
+            if priceVector[-1]<100:
                 continue
             #print 'var numDays=' + str(numDays)
-            #print 'num Days for this one is '+ str(len(trainingVector))
-            if numDays == 0:
-                numDays=len(trainingVector)
+            #print 'num Days for this one is '+ str(len(priceVector))
+            #if numDays == 0:
+            #    numDays=len(priceVector)
                 #print 'updated numDays to ' +str(numDays)
-            elif not numDays==len(trainingVector): 
-                print 'day lengths not equal, sad times'
-                return None
-            yVector.append(trainingVector[-1])
-            listOfTrainingVectors.append(trainingVector[0:-labelGap])
-            #print 'traing vector was'+str(trainingVector)+'; list is now:' + str(listOfTrainingVectors)
-    #numVectors=len(listOfTrainingVectors)
-    #listOfTrainingVectors=[array(trainingVec) for trainingVec in listOfTrainingVectors] #converts each vector to array form for next step; might change order, shouldn't matter
+            #elif not numDays==len(priceVector): 
+            #    print 'day lengths not equal, sad times'
+            #    return None
+            cardsUsed.append(x)
+            yVector.append(priceVector[-1])
+            #trainingVec=pricVec+AttribVec
+            listOfTrainingVectors.append(priceVector[0:-labelGap])
+            #print 'traing vector was'+str(priceVector)+'; list is now:' + str(listOfpriceVectors)
+    #numVectors=len(listOfpriceVectors)
+    #listOfpriceVectors=[array(trainingVec) for trainingVec in listOfpriceVectors] #converts each vector to array form for next step; might change order, shouldn't matter
     #trainingMatrix=np.zeroes((numVectors,numDays), np.int16)
-    trainingMatrix=np.matrix(listOfTrainingVectors)
+    trainingMatrix=np.matrix(listOfTrainingVectors, dtype=float)
+    print 'using card numbers' + str(cardsUsed)
     #print 'trainingMatrix is ' 
     #print trainingMatrix
     #print 'y Vector is '
@@ -57,7 +65,7 @@ def main(argv):
     # 1st arg: starting cardnumber, mandatory
     # 2nd arg: ending cardnumber, mandatory
     # 3rd arg: number of days ahead we're trying to predict, optional
-    # 4th arg: 
+    # 4th arg: whether verbose
     labelGap=1
     verbose=False 
     if len(argv) < 2:
@@ -75,11 +83,22 @@ def main(argv):
         exit(1)
     startNumber = int(argv[1])
     endNumber=int(argv[2])
-    #for x in xrange(startNumber, endNumber+1):
-    #   print str(x) #basic testing
+    
     (X,y)=constructTrainingMatrix(startNumber, endNumber, labelGap)
+    
+    scaler=preprocessing.StandardScaler().fit(X)
+    X_scaled=scaler.transform(X)
+    
+    #X_scaled=preprocessing.scale(X)
+    if verbose:
+        print scaler
+        print scaler.mean_
+        print 'the mean of the scaled data is ' + str(X_scaled.mean(axis=0))
+        print 'the std of the scaled data is ' + str(X_scaled.std(axis=0))
+        print 'here is the data'+ str(X)
+        print 'here is the scaled data'+ str(X_scaled)
     #X is a matrix with n_examples rows and n_days columns, y is a n_examples long vector of what the prices were labelGap days in the future
-    (X_train,X_test,y_train,y_test)=cv.train_test_split(X,y,test_size=0.4, random_state=0)
+    (X_train,X_test,y_train,y_test)=cv.train_test_split(X_scaled,y,test_size=0.4, random_state=0)
     if verbose:
         print 'size of whole example matrix \t' + str(X.shape) 
         print 'size of whole output vector \t' + str((np.array(y)).shape)
