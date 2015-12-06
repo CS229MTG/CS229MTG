@@ -32,7 +32,7 @@ def constructTrainingMatrix(startNumber,endNumber, labelGap, convertToSparse=Fal
     #numDays=0
     #parse JSON data
     for x in xrange(startNumber, endNumber+1):
-        priceVector=DataUtils.parseIntoPriceOnlyList(x)
+        priceVector=DataUtils.parseIntoPriceOnlyList(x, True)
         # card attributes vector=Utils.parseIntoAttributeList(x,parsedData)
         if not priceVector==None:
             #print 'var numDays=' + str(numDays)
@@ -92,7 +92,7 @@ def main(argv):
     scaler=preprocessing.StandardScaler()
     pca=PCA(n_components=10)
     svr=svm.SVR(kernel='linear', C=1)
-    pipe=pipeline.Pipeline([("scaler",scaler),("pca",pca),("svr",svr)])
+    pipe=pipeline.Pipeline([("scaler",scaler),("svr",svr)])
     # this "pipeline" is an object which combines the tasks of scaling the data, running PCA, and then doing a Support Vector Regression
     # that allows us to automate parameter tuning  via Cross Validation in a fairly painless manner
     # the parameters for the pipeline are: n_components, C, epsilon, kernel, degree (poly kernel only), and gamma (rbf only)

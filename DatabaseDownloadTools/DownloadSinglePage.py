@@ -58,7 +58,7 @@ def downloadSinglePage(cardNumber, verbose):
 	dataBlock = dataBlock[startIndex:]
 	endIndex = string.find(dataBlock,'] ]') - 3
 	if endIndex < 0: 
-		print dataBlock
+		#print dataBlock
 		print 'FATAL ERROR: id not found'
 		sys.exit(1)
 	dataBlock = dataBlock[:endIndex]

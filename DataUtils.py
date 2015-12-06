@@ -35,16 +35,19 @@ def removeCarriageReturn(list):
     for idx, line in enumerate(list):
         list[idx] = line[:-1]
     
-def parseIntoHeaderDatePriceList(cardNumber):
+def parseIntoHeaderDatePriceList(cardNumber, useRelevant):
     cardNumber = str(cardNumber)
     #missing 0's:
     mm0s = missing0s(cardNumber)
     
     #open the file, get the lines
-    filename = 'DatabaseDownloadTools/RelevantCardPriceData/CardData'+ mm0s + cardNumber+".txt"
+    if useRelevant:
+        filename = 'DatabaseDownloadTools/RelevantCardPriceData/CardData'+ mm0s + cardNumber+".txt"
+    else:
+        filename = 'DatabaseDownloadTools/CardPriceData/CardData'+ mm0s + cardNumber+".txt"
     try:
         f = open(filename,'r')
-        lines = f.readlines(28000)
+        lines = f.readlines(30000)
         removeCarriageReturn(lines)
         f.close()
         
@@ -59,8 +62,8 @@ def removeHeader(list):
     del list[0]
     return header
     
-def parseIntoPriceOnlyList(cardNumber):
-    list = parseIntoHeaderDatePriceList(cardNumber)
+def parseIntoPriceOnlyList(cardNumber, useRelevant):
+    list = parseIntoHeaderDatePriceList(cardNumber, useRelevant)
     if list == None: return None
     
     removeHeader(list)
