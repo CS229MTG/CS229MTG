@@ -121,7 +121,8 @@ def main(argv):
 	except OSError:
 		pass
 	with open(errfilename, 'w') as f:
-		for x in range(1,31):
+		for x in range(1,28000):
+			if x%500 ==0: print str(x)+ 'cards through'
 			if not retrieveCardDataIntoVector(int(x), cardsDict):
 				f.write(str(x)+'\n')
 	print 'Done!'
