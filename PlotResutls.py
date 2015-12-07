@@ -4,7 +4,7 @@ import sys
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-from boto.ec2.elb import listener
+#from boto.ec2.elb import listener
 
 startValue = 1
 incrementValue = 1
@@ -13,15 +13,15 @@ endValue = 30
 def algor1(xaxis):
     ret = []
     for x in xaxis:
-        #GET OUTPUTS!
-        ret.append(2)
+        output = 2#SVMScore(x)
+        ret.append(output)
     return ret
     
 def algor2(xaxis):
     ret = []
     for x in xaxis:
-        #GET OUTPUTS!
-        ret.append(4)
+        output = 4#SVMScore(x)
+        ret.append(output)
     return ret
     
 

@@ -76,7 +76,7 @@ def main(argv):
     vector = getEntireVector(inputCardNumber, False, JSONCardDict, TopDeckDict)
     if vector == None: 
         print 'Error retrieving card!'
-    
+        exit(1)
     print 'Vector created.'
     print vector
     
