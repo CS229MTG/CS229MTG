@@ -9,7 +9,7 @@ except:pass
 
 verbose = False
 
-def getEntireVector(cardNumber, useRelevant, JSONCardDict, TopDeckDict):
+def getEntireVector(cardNumber, useRelevant):
     #price vector
     if verbose: print 'Getting price vector...'
     priceVector = getPriceVector(cardNumber, useRelevant)
@@ -39,9 +39,14 @@ def getJSONDescriptionDictionary():
 def getTopDeckDictionary():
     return TDUtils.parseTopDecksIntoReadableData()
 
+TopDeckDict = getTopDeckDictionary()
+JSONCardDict = getJSONDescriptionDictionary()
 
 """
 CODE BELOW HERE IS IRRELEVANT TO CALLER 
+Price Vector length: 1246
+JSON description length: 214
+Top decks vector: 60
 """
 
 
