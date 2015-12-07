@@ -11,7 +11,7 @@ import sys
 import os
 import string
 import datetime
-import DataUtils
+import VectorUtils
 import numpy as np
 from sklearn import svm
 from sklearn import cross_validation as cv
@@ -22,7 +22,7 @@ from sklearn import pipeline
 from sklearn import grid_search
 
 
-
+lastDay = 1245
 currenttime = 1446879000000;
     
 def constructTrainingMatrix(startNumber,endNumber, labelGap, convertToSparse=False):
@@ -32,7 +32,7 @@ def constructTrainingMatrix(startNumber,endNumber, labelGap, convertToSparse=Fal
     #numDays=0
     #parse JSON data
     for x in xrange(startNumber, endNumber+1):
-        priceVector=DataUtils.parseIntoPriceOnlyList(x, True)
+        priceVector=VectorUtils.getEntireVector(x, True)
         # card attributes vector=Utils.parseIntoAttributeList(x,parsedData)
         if not priceVector==None:
             #print 'var numDays=' + str(numDays)
@@ -44,7 +44,7 @@ def constructTrainingMatrix(startNumber,endNumber, labelGap, convertToSparse=Fal
             #    print 'day lengths not equal, sad times'
             #    return None
             cardsUsed.append(x)
-            yVector.append(float(priceVector[-1]))
+            yVector.append(priceVector[lastDay])
             #trainingVec=pricVec+AttribVec
             listOfTrainingVectors.append(priceVector[0:-labelGap])
             #print 'traing vector was'+str(priceVector)+'; list is now:' + str(listOfpriceVectors)

@@ -14,8 +14,8 @@ import datetime
 import shutil
 import DataUtils
 
-startCard=27482
-endCard=30000
+startCard=9
+endCard=15
 
 def getFileNameFromCardNumber(c, src):
 	cardNumber = str(c)

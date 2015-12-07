@@ -207,7 +207,7 @@ def retrieveCardDataIntoVector(cardNumber, cardDict, useRelevant):
 	try:
 		card = cardDict[cardName]
 	except:
-		print 'failed to map card to json'
+		#print 'failed to map card to json'
 		return None
 		
 		
