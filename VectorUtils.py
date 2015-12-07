@@ -32,7 +32,18 @@ def getEntireVector(cardNumber, useRelevant):
     retVector = priceVector + JSONDescriptionVector + topDeckVector
     
     return retVector
-    
+   
+
+"""
+Price Vector length: 1246
+JSON description length: 214
+Top decks vector: 60
+CODE BELOW HERE IS IRRELEVANT TO CALLER 
+"""
+
+
+
+
 def getJSONDescriptionDictionary():
     return JUtils.parseJsonIntoCardsDictionary()
 
@@ -41,15 +52,6 @@ def getTopDeckDictionary():
 
 TopDeckDict = getTopDeckDictionary()
 JSONCardDict = getJSONDescriptionDictionary()
-
-"""
-CODE BELOW HERE IS IRRELEVANT TO CALLER 
-Price Vector length: 1246
-JSON description length: 214
-Top decks vector: 60
-"""
-
-
 
 def getPriceVector(cardNumber,useRelevant):
     return DUtils.parseIntoPriceOnlyList(cardNumber,useRelevant)
@@ -75,10 +77,7 @@ def main(argv):
     
     print 'Attempting to create vector for '+str(inputCardNumber)+'...'
     
-    JSONCardDict = getJSONDescriptionDictionary()
-    TopDeckDict= getTopDeckDictionary()
-    
-    vector = getEntireVector(inputCardNumber, False, JSONCardDict, TopDeckDict)
+    vector = getEntireVector(inputCardNumber, False)
     if vector == None: 
         print 'Error retrieving card!'
         exit(1)

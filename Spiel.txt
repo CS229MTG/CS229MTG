@@ -1,0 +1,21 @@
+90 second spiel
+
+background/context
+	magic is a trading card game
+	like stocks, have prices
+	can we predict prices with machine learning?
+
+data
+	features:
+	historical price data
+	what the card is/does
+	tournaments: 
+		4 times a year, new set
+			couple hundred new cards
+			unknown value
+			affect previous cards
+		protours: 
+			soon after release
+			many people look to tournament for "advice"
+
+analysis

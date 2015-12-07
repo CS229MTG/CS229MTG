@@ -1,0 +1,29 @@
+10th Edition:13001
+7th Edition:14001
+Alara Reborn:2001
+Beta Edition:24001,27001
+Born of the Gods:23001
+Commander 2013:22001
+Commander:19001
+Conspiracy:25001
+Duel Decks: Garruk vs. Liliana:17001
+Fifth Edition:15001
+Game Day Promos:26001
+Gatecrash:20001
+Ice Age:11001
+Innistrad:1,30
+Magic 2013 (M13):12001
+Mirrodin Besieged:1001
+Mirrodin:6001
+Modern Masters:21001
+Morningtide:3001
+Portal Second Age:18001
+Prophecy:8001
+Rise of the Eldrazi:1286,1338
+Saviors of Kamigawa:5001
+Theros:21665
+Time Spiral:4001
+Torment:7001
+Unlimited Edition:16001
+Urza's Saga:9001
+Weatherlight:10001
