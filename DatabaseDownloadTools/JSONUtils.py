@@ -17,9 +17,9 @@ import re
 import os
 import os.path
 try:
-	os.chdir('C:\Users\Emily\Documents\GitHub\CS229MTG\DatabaseDownloadTools')
+	os.chdir('C:\Users\Emily\Documents\GitHub\CS229MTG')
 except:
-	print 'no'
+	pass
 
 JSONUtilsVerbose = True;
 #mana cost portion
@@ -39,7 +39,7 @@ typesVector = ['Creature','Artifact','Land','Planeswalker',
 'Tribal','Instant','Enchantment','Sorcery']
 #description words
 descriptionVector = []
-with open('mechanic strings','r') as f:
+with open('DatabaseDownloadTools\mechanic strings','r') as f:
 	lines = f.readlines()
 	for line in lines:
 		leline = line.strip()
@@ -78,7 +78,7 @@ def missing0s(cardNumber):
 def parseJsonIntoCardsDictionary():
 	if JSONUtilsVerbose: print 'Parsing JSON file...'
 	#parse the json file
-	json_file = 'DATA-AllCards-x.json'
+	json_file = 'DatabaseDownloadTools\DATA-AllCards-x.json'
 	with open(json_file, 'r') as f:
 		cards = loads(f.read()) 
 	if JSONUtilsVerbose: print 'Parsing JSON Complete.'
@@ -180,11 +180,15 @@ def makeVectorFromCardData(card):
 	vector += getLegalitiesVector(card)
 	return vector
 
-def getCardNameFromCardNumber(cardNumber):
+def getCardNameFromCardNumber(cardNumber,useRelevant):
 	#open the file, get the card name
 	#missing 0's:
 	mm0s = missing0s(cardNumber)
-	filename = 'cardPriceData/CardData'+ mm0s + str(cardNumber)+'.txt'
+	
+	if useRelevant:
+		filename = 'DatabaseDownloadTools/RelevantCardPriceData/RelevantCardData'+ mm0s + str(cardNumber)+'.txt'
+	else:
+		filename = 'DatabaseDownloadTools/cardPriceData/CardData'+ mm0s + str(cardNumber)+'.txt'
 	
 	#Check for existence of card
 	try:
@@ -194,9 +198,9 @@ def getCardNameFromCardNumber(cardNumber):
 	except: 
 		return None
 	
-def retrieveCardDataIntoVector(cardNumber, cardDict):
+def retrieveCardDataIntoVector(cardNumber, cardDict, useRelevant):
 	#get the card name
-	cardName = getCardNameFromCardNumber(cardNumber)
+	cardName = getCardNameFromCardNumber(cardNumber, useRelevant)
 	if cardName == None: return None
 	
 	#look in dictionary for card
@@ -226,20 +230,28 @@ def findErrorsInMapping():
 				f.write(str(x)+'\n')
 	print 'Done!'
 
+def findEtherCards(JSONCardsDict):
+	print 'Searching for AEther!!'
+	for key in JSONCardsDict:
+		if u'therling' in unicode(key):
+			print str(type(key))+': '+key+'\t\t'+unicode(key)
 
-def main(argv):
-	
-	#get dictionary
-	cardsDict = parseJsonIntoCardsDictionary()
+def testing(cardsDict):
 	
 	for x in range(1,28000):
 		#if x%500 ==0: print 'Processed '+str(x)+ 'cards...'
 		
 		#get the card vector
-		name = getCardNameFromCardNumber(x)
+		name = getCardNameFromCardNumber(x, False)
 		if name != None: print name
 		cardVector = retrieveCardDataIntoVector(int(x), cardsDict)
 		if cardVector != None: print '\tVector length:' + str(len(cardVector))
+
+def main(argv):
+	
+	#get dictionary
+	cardsDict = parseJsonIntoCardsDictionary()
+	findEtherCards(cardsDict)
 		
 	print 'Done!'
 if __name__ == '__main__':

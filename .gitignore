@@ -4,3 +4,5 @@ DatabaseDownloadTools/RelevantCardPriceData/
 *.pyc
 DatabaseDownloadTools/FAILURES.txt
 DatabaseDownloadTools/FAILURESMappingPriceToCardName.txt
+DatabaseDownloadTools/mechanic strings
+Results/

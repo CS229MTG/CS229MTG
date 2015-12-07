@@ -29,6 +29,6 @@
 1 Golgari Charm
 1 Rakdos's Return
 2 Magma Spray
-4 Miscutter Hydra
+4 Mistcutter Hydra
 2 Doom Blade
 2 Scavenging Ooze
