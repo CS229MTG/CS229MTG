@@ -186,7 +186,7 @@ def getCardNameFromCardNumber(cardNumber,useRelevant):
 	mm0s = missing0s(cardNumber)
 	
 	if useRelevant:
-		filename = 'DatabaseDownloadTools/RelevantCardPriceData/RelevantCardData'+ mm0s + str(cardNumber)+'.txt'
+		filename = 'DatabaseDownloadTools/RelevantCardPriceData/CardData'+ mm0s + str(cardNumber)+'.txt'
 	else:
 		filename = 'DatabaseDownloadTools/cardPriceData/CardData'+ mm0s + str(cardNumber)+'.txt'
 	
