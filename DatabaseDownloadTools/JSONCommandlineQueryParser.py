@@ -50,9 +50,10 @@ def parseJson():
 			print 'Card not found'
 			continue
 		try:
-			legalities = thiscard['legalities']
-			for legality in legalities:
-				print '\t'+legality['format']+': \t'+legality['legality']
+			"""
+			THIS IS WHERE WHAT IS PRINTED IS DECIDED
+			"""
+			print thiscard
 		except:
 			print 'CARD ATTRIBUTE FAILURE'
 			for key in thiscard.keys():

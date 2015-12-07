@@ -44,7 +44,7 @@ def parseIntoHeaderDatePriceList(cardNumber, useRelevant):
     if useRelevant:
         filename = 'DatabaseDownloadTools/RelevantCardPriceData/CardData'+ mm0s + cardNumber+".txt"
     else:
-        filename = 'DatabaseDownloadTools/CardPriceData/CardData'+ mm0s + cardNumber+".txt"
+        filename = 'DatabaseDownloadTools/cardPriceData/CardData'+ mm0s + cardNumber+".txt"
     try:
         f = open(filename,'r')
         lines = f.readlines(30000)
@@ -84,7 +84,7 @@ def main(argv):
     if len(argv) > 2:
         if argv[2] == '-v': verbose = True
     cardNumber = argv[1]
-    priceList = parseIntoPriceOnlyList(cardNumber)
+    priceList = parseIntoPriceOnlyList(cardNumber, False)
     
     if priceList == None: 
         print "file not found."
