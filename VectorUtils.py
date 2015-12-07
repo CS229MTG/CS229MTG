@@ -73,7 +73,7 @@ def main(argv):
     JSONCardDict = getJSONDescriptionDictionary()
     TopDeckDict= getTopDeckDictionary()
     
-    vector = getEntireVector(inputCardNumber, True, JSONCardDict, TopDeckDict)
+    vector = getEntireVector(inputCardNumber, False, JSONCardDict, TopDeckDict)
     if vector == None: 
         print 'Error retrieving card!'
     
