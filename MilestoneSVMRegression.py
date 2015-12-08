@@ -26,37 +26,23 @@ lastDay = 1245
 currenttime = 1446879000000;
     
 def constructTrainingMatrix(startNumber,endNumber, labelGap, convertToSparse=False):
-    listOfTrainingVectors=[]
+    listOfFeatureVectors=[]
     yVector=[]
-    cardsUsed=[]
-    #numDays=0
-    #parse JSON data
+    cardsUsed=0
     for x in xrange(startNumber, endNumber+1):
-        priceVector=VectorUtils.getEntireVector(x, True)
-        # card attributes vector=Utils.parseIntoAttributeList(x,parsedData)
-        if not priceVector==None:
-            #print 'var numDays=' + str(numDays)
-            #print 'num Days for this one is '+ str(len(priceVector))
-            #if numDays == 0:
-            #    numDays=len(priceVector)
-                #print 'updated numDays to ' +str(numDays)
-            #elif not numDays==len(priceVector): 
-            #    print 'day lengths not equal, sad times'
-            #    return None
-            cardsUsed.append(x)
-            yVector.append(priceVector[lastDay])
-            #trainingVec=pricVec+AttribVec
-            listOfTrainingVectors.append(priceVector[0:-labelGap])
-            #print 'traing vector was'+str(priceVector)+'; list is now:' + str(listOfpriceVectors)
-    #numVectors=len(listOfpriceVectors)
-    #listOfpriceVectors=[array(trainingVec) for trainingVec in listOfpriceVectors] #converts each vector to array form for next step; might change order, shouldn't matter
-    #trainingMatrix=np.zeroes((numVectors,numDays), np.int16)
-    trainingMatrix=np.matrix(listOfTrainingVectors, dtype=float)
-    #print 'using card numbers' + str(cardsUsed)
-    #print 'trainingMatrix is ' 
-    #print trainingMatrix
-    #print 'y Vector is '
-    #print yVector
+        featureVector=VectorUtils.getEntireVector(x, True)
+        if not featureVector==None:
+            cardsUsed+=1
+            yVector.append(featureVector[lastDay])
+            trainingPrice=featureVector[0:(lastDay+1-labelGap)]
+            restOfFeatures=featureVector[(lastDay+1):]
+            trainingFeatures=trainingPrice+restOfFeatures
+            listOfFeatureVectors.append(trainingFeatures)
+            
+    
+    trainingMatrix=np.matrix(listOfFeatureVectors, dtype=float)
+    print 'processed ' +str(cardsUsed) + ' cards'
+    print 'will train on ' + str(.7*cardsUsed)+ ' cards'
     return (trainingMatrix,yVector)
 
 def SVMRegression(startNumber,endNumber,labelGap,verbose):
@@ -79,36 +65,37 @@ def SVMRegression(startNumber,endNumber,labelGap,verbose):
                     #,{'svr__kernel': ['poly'], 'svr__degree': [2,3,4],
                     #'svr__C': [.1,1, 10, 100]}
     #               ]
-    param_grid=[{'svr__kernel': ['linear'], 'svr__C': [100]}
+    #param_grid=[{'svr__kernel': ['linear'], 'svr__C': [100]}
                     #,{'svr__kernel': ['poly'], 'svr__degree': [2,3,4],
                     #'svr__C': [.1,1, 10, 100]}
-                    ]
+                    #]
                                     
-    tunedPipe=grid_search.GridSearchCV(pipe, param_grid, cv=7)
+    #tunedPipe=grid_search.GridSearchCV(pipe, param_grid, cv=7)
+    tunedPipe=pipe
     tunedPipe.fit(X_train,y_train)
-    print("Best parameters set found on development set:")
-    print()
-    print(tunedPipe.best_params_)
-    print()
-    print("Grid scores on development set:")
-    print()
-    for params, mean_score, scores in tunedPipe.grid_scores_:
-        print("%0.3f (+/-%0.03f) for %r"
-              % (mean_score, scores.std() * 2, params))
-    print()
+    #print("Best parameters set found on development set:")
+    #print()
+    #print(tunedPipe.best_params_)
+    #print()
+    #print("Grid scores on development set:")
+    #print()
+    #for params, mean_score, scores in tunedPipe.grid_scores_:
+    #    print("%0.3f (+/-%0.03f) for %r"
+    #          % (mean_score, scores.std() * 2, params))
+    #print()
 
-    print("Detailed classification report:")
-    print()
-    print("The model is trained on the full development set.")
-    print("The scores are computed on the full evaluation set.")
-    print()
+    #print("Detailed classification report:")
+    #print()
+    #print("The model is trained on the full development set.")
+    #print("The scores are computed on the full evaluation set.")
+    #print()
     tunedScore=tunedPipe.score(X_test,y_test)
     #jace_data=DataUtils.parseIntoPriceOnlyList(27037, True)
     #jace_data=jace_data[28:]
     #jace_pred=tunedPipe.predict(jace_data)
     #print 'predicted price for Jace' + str(jace_pred)
     print 'score on test set was ' + str(tunedScore)
-    print()
+    #print()
     
 def main(argv):
     # 1st arg: starting cardnumber, mandatory
