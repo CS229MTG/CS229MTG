@@ -18,7 +18,7 @@ import os
 import os.path
 import DataUtils
 
-def getFileNameFromCardNumber(c, src):
+def getFileNameFromCardNumber(c, useRelevant):
 	cardNumber = str(c)
 	#missing 0's:
 	mm0s = DataUtils.missing0s(cardNumber)
@@ -26,13 +26,17 @@ def getFileNameFromCardNumber(c, src):
 	#open the file, get the lines
 	filename = ''
 	filename += 'DatabaseDownloadTools/'
-	filename += 'RelevantCardPriceData'
+	if useRelevant:
+		filename += 'RelevantCardPriceData'
+	else:
+		filename += 'cardPriceData'
+		
 	filename += '/CardData'+ mm0s + cardNumber+".txt"
 	return filename
 
-def extractSetName(cardNumber):
+def extractSetName(cardNumber, useRelevant):
 	#get the sets
-	filename = getFileNameFromCardNumber(cardNumber, True)
+	filename = getFileNameFromCardNumber(cardNumber, useRelevant)
 	try:
 		with open(filename, 'r') as f:
 			f.readline()
@@ -44,7 +48,7 @@ def extractSetName(cardNumber):
 startCard=1
 endCard=30000
 
-#description words
+#set name vector
 setNamesVector = []
 with open('DatabaseDownloadTools\SetNames.txt','r') as f:
 	lines = f.readlines()
@@ -52,9 +56,9 @@ with open('DatabaseDownloadTools\SetNames.txt','r') as f:
 		leline = line.strip()
 		setNamesVector.append(leline)
 
-def getSetNameVector(cardNumber):
+def getSetNameVector(cardNumber, useRelevant):
 	vector = []
-	thisSetName = extractSetName(cardNumber)
+	thisSetName = extractSetName(cardNumber, useRelevant)
 	if thisSetName == None: 
 		return None
 	
@@ -93,7 +97,7 @@ def main(argv):
 	
 	for x in range(startCard,endCard):
 		if x%500==0: print 'Card ' + str(x) + '...'
-		vector = getSetNameVector(x)
+		vector = getSetNameVector(x, True)
 		if vector != None: print str([x]+vector)
 		
 	print 'Done!'

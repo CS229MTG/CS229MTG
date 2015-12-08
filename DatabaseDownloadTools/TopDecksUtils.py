@@ -24,6 +24,16 @@ def missing0s(cardNumber):
 	else:
 		return ''
 	
+def getTopDeckVectorDescriptor():
+	list = []
+	
+	txt = ['Winner\'s main deck','Winner\'s side deck', 'other main decks','other side decks', 'all decks']
+	for x in range(0,60):
+		tn = (x-x%5)/5+1
+		list.append('Tournament '+str(tn)+', '+txt[x%5])
+		
+	return list
+	
 	
 def readDeckAndSideDeck(tourNumber,DeckNumber):
 	#open the file, get the lines

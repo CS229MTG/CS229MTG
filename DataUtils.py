@@ -15,6 +15,14 @@ import datetime
 currenttime = 1446879000000;
 verbose = False
 
+def getPVD():
+	list = []
+	currenttime = 1446879000000
+	datetime = 1339286400000
+	while datetime < currenttime:
+		list.append('Price on '+convertUnixTimeToHuman(datetime))
+		datetime+=86400000
+	return list
 
 def convertUnixTimeToHuman(str):
     ans = (
