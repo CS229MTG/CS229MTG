@@ -43,6 +43,7 @@ with open('DatabaseDownloadTools\mechanic strings','r') as f:
 	lines = f.readlines()
 	for line in lines:
 		leline = line.strip()
+		leline=leline.lower()
 		descriptionVector.append(leline)
 #power
 powerVector = ['Power attr']
@@ -138,6 +139,20 @@ def getVectorFromContaining(card, inputVector, key):
 			else:
 				vector.append(0)
 	return vector
+    
+def getVectorFromCaseInsensitiveContaining(card, inputVector, key):
+	vector = []
+	if key not in card.keys():
+		for input in inputVector:
+			vector.append(0)
+	else: 
+		for input in inputVector:
+			if input in (word.lower() for word in card[key]):
+				vector.append(1)
+			else:
+				vector.append(0)
+	return vector
+    
 def getVectorFromCountOf(card,key):
 	vector = []
 	if key not in card.keys():
@@ -172,7 +187,7 @@ def makeVectorFromCardData(card):
 	vector += getVectorFromNumber(card,'cmc')
 	vector += getVectorFromContaining(card, colorsVector,'colors')
 	vector += getVectorFromContaining(card, typesVector,'types')
-	vector += getVectorFromContaining(card, descriptionVector,'text')
+	vector += getVectorFromCaseInsensitiveContaining(card, descriptionVector,'text')
 	vector += getVectorFromNumber(card,'power')
 	vector += getVectorFromNumber(card,'toughness')
 	vector += getVectorFromCountOf(card,'printings')
