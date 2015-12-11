@@ -59,6 +59,7 @@ def describeVector(vector,descriptor):
 Price Vector length: 1246
 JSON description length: 214
 Top decks vector: 60
+SetName vector: 145
 CODE BELOW HERE IS IRRELEVANT TO CALLER 
 """
 
