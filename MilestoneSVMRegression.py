@@ -10,6 +10,7 @@ takes 2 arguments, a starting and ending card number to train the model on
 import sys
 import os
 import string
+import random
 import datetime
 import VectorUtils
 import numpy as np
@@ -25,12 +26,13 @@ from sklearn import grid_search
 lastDay = 1245
 currenttime = 1446879000000;
     
-def constructTrainingMatrix(startNumber,endNumber, labelGap, convertToSparse=False):
+def constructTrainingMatrix(numURLS, labelGap):
     listOfFeatureVectors=[]
     yVector=[]
     cardsUsed=0
-    for x in xrange(startNumber, endNumber+1):
-        featureVector=VectorUtils.getEntireVector(x, True)
+    URLS=random.sample(xrange(30000),numURLS)
+    for x in URLS:
+        featureVector=VectorUtils.getPriceVector(x, True)
         if not featureVector==None:
             cardsUsed+=1
             yVector.append(featureVector[lastDay])
@@ -45,8 +47,8 @@ def constructTrainingMatrix(startNumber,endNumber, labelGap, convertToSparse=Fal
     print 'will train on ' + str(.7*cardsUsed)+ ' cards'
     return (trainingMatrix,yVector)
 
-def SVMRegression(startNumber,endNumber,labelGap,verbose):
-    (X,y)=constructTrainingMatrix(startNumber, endNumber, labelGap)
+def SVMRegression(numURLS,labelGap):
+    (X,y)=constructTrainingMatrix(numURLS, labelGap)
     #X is a matrix with n_examples rows and n_days columns, y is a n_examples long vector of what the prices were labelGap days in the future
     X_train, X_test, y_train, y_test =cv.train_test_split(
     X, y, test_size=0.3, random_state=0)
@@ -98,28 +100,20 @@ def SVMRegression(startNumber,endNumber,labelGap,verbose):
     #print()
     
 def main(argv):
-    # 1st arg: starting cardnumber, mandatory
-    # 2nd arg: ending cardnumber, mandatory
+    # 1st arg: number of URLS to try
     # 3rd arg: number of days ahead we're trying to predict, optional
-    # 4th arg: whether verbose
     labelGap=1
-    verbose=False 
     if len(argv) < 2:
         print >> sys.stderr, 'Do not run this from the command prompt unless testing. '
         sys.exit(1)
-    if len(argv) < 3:
-        print 'at least 2 args required'
-        exit(1)
-    if len(argv) >=4:
-        labelGap=int(argv[3])
-    if len(argv) >=5:
-        verbose=True
-    if len(argv) > 5:
+    if len(argv) >=3:
+        labelGap=int(argv[2])
+    if len(argv) > 3:
         print "fewer args please"
         exit(1)
-    startNumber = int(argv[1])
-    endNumber=int(argv[2])
-    SVMRegression(startNumber,endNumber,labelGap,verbose)
+    numURLS=int(argv[1])
+    numURLS=min(numURLS,30000)
+    SVMRegression(numURLS,labelGap)
     
 if __name__ == '__main__':
     main(sys.argv)
