@@ -21,10 +21,16 @@ from sklearn import preprocessing
 from sklearn.decomposition import PCA
 from sklearn import pipeline
 from sklearn import grid_search
+import Vexport
 
 
 lastDay = 1245
 currenttime = 1446879000000;
+
+pricePart = 1246
+JSONPart = 214
+TopDeckPart = 60
+SetNamePart = 145
     
 def constructTrainingMatrix(numURLS, labelGap):
     listOfFeatureVectors=[]
@@ -32,11 +38,12 @@ def constructTrainingMatrix(numURLS, labelGap):
     cardsUsed=0
     URLS=random.sample(xrange(30000),numURLS)
     for x in URLS:
-        featureVector=VectorUtils.getPriceVector(x, True)
+        featureVector=VectorUtils.getEntireVector(x, True)
         if not featureVector==None:
+            featureVector=featureVector[0:pricePart+JSONPart]
             cardsUsed+=1
             yVector.append(featureVector[lastDay])
-            trainingPrice=featureVector[0:(lastDay+1-labelGap)]
+            trainingPrice=featureVector[:(lastDay+1-labelGap)]
             restOfFeatures=featureVector[(lastDay+1):]
             trainingFeatures=trainingPrice+restOfFeatures
             listOfFeatureVectors.append(trainingFeatures)
@@ -46,20 +53,41 @@ def constructTrainingMatrix(numURLS, labelGap):
     print 'processed ' +str(cardsUsed) + ' cards'
     print 'will train on ' + str(.7*cardsUsed)+ ' cards'
     return (trainingMatrix,yVector)
-
-def SVMRegression(numURLS,labelGap):
+    
+def filterLargeDeltaCards(X,y, labelGap, priceDeltaTolerance):
+    numPoints=len(y)
+    smallDeltas=[]
+    print str(numPoints) + ' points in test set being filtered'
+    for x in xrange(numPoints):
+        lastObservedPrice=X[x,lastDay-labelGap]
+        if lastObservedPrice==0: continue
+        currentPrice=y[x]
+        #print 'lastObservedPrice:' + str(lastObservedPrice) + ' currPrice: ' + str(currentPrice)
+        priceDelta=(currentPrice-lastObservedPrice)/float(lastObservedPrice)
+        if priceDelta<priceDeltaTolerance: smallDeltas.append(x)
+    print 'found ' + str(len(smallDeltas)) + ' cards with too small deltas'
+    X=np.delete(X, smallDeltas, axis=0)
+    y=np.delete(y, smallDeltas, axis=0)
+    print 'now testing on ' + str(len(y)) + ' cards'
+    return X,y
+    
+def SVMRegression(numURLS,labelGap, noFilter, usePCA):
     (X,y)=constructTrainingMatrix(numURLS, labelGap)
     #X is a matrix with n_examples rows and n_days columns, y is a n_examples long vector of what the prices were labelGap days in the future
     X_train, X_test, y_train, y_test =cv.train_test_split(
     X, y, test_size=0.3, random_state=0)
     
-    #XVar_test, yVar_test=filterLargeDeltaCards(X_test,y_test)
+    if not noFilter:X_test, y_test=filterLargeDeltaCards(X_test,y_test, labelGap, .05)
     
     scaler=preprocessing.StandardScaler()
     pca=PCA(n_components=10) 
-    svr=svm.SVR(kernel='linear', C=100)
-    #pipe=pipeline.Pipeline([("scaler",scaler),("pca", pca)("svr",svr)]) # this version of the pipeline applies PCA
-    pipe=pipeline.Pipeline([("scaler",scaler),("svr",svr)]) #this one does not 
+    svr=svm.LinearSVR(C=100)
+    if usePCA:
+        print 'applying PCA'
+        pipe=pipeline.Pipeline([("scaler",scaler),("pca", pca),("svr",svr)]) # this version of the pipeline applies PCA
+    else:
+        pipe=pipeline.Pipeline([("scaler",scaler),("svr",svr)]) #this one does not 
+        
     # this "pipeline" is an object which combines the tasks of scaling the data, running PCA, and then doing a Support Vector Regression
     # that allows us to automate parameter tuning  via Cross Validation in a fairly painless manner
     # the parameters for the pipeline are: n_components, C, epsilon, kernel, degree (poly kernel only), and gamma (rbf only)
@@ -103,17 +131,22 @@ def main(argv):
     # 1st arg: number of URLS to try
     # 3rd arg: number of days ahead we're trying to predict, optional
     labelGap=1
+    noFilter=False
+    usePCA=False
     if len(argv) < 2:
         print >> sys.stderr, 'Do not run this from the command prompt unless testing. '
         sys.exit(1)
     if len(argv) >=3:
+        if argv[2] <1: print 'labelGap must be an int >=1'
         labelGap=int(argv[2])
-    if len(argv) > 3:
+    if '--noFilter' in argv: noFilter=True
+    if '--PCA' in argv: usePCA=True 
+    if len(argv) > 5:
         print "fewer args please"
         exit(1)
     numURLS=int(argv[1])
     numURLS=min(numURLS,30000)
-    SVMRegression(numURLS,labelGap)
+    SVMRegression(numURLS,labelGap,noFilter, usePCA)
     
 if __name__ == '__main__':
     main(sys.argv)
